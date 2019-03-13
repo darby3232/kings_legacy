@@ -7,26 +7,20 @@ public class Lord : MonoBehaviour
 
     public Color LordsColor;
 
-    private bool isKing;
-    private float specialLandChance; 
+    protected bool isKing;
+    protected float specialLandChance; 
     
-    private int numberArmies;
-    private int numberLands; //replace with list when implementing special Lands
-    private int numberWealth;
+    protected int numberArmies;
+    protected int numberLands; //replace with list when implementing special Lands
+    protected int numberWealth;
 
-
-    public Lord(bool isKing, Color lordsColor, float specialLandChance)
-    {
-        this.isKing = isKing;
-        LordsColor = lordsColor;
-        this.specialLandChance = specialLandChance; 
-    }
 
     public int GetWealth()
     {
         return numberWealth; 
     }
 
+    //not sure if this function should go here
     public void GainArmies(int numWealthSpent)
     {
         if(numWealthSpent <= numberWealth)
@@ -41,8 +35,19 @@ public class Lord : MonoBehaviour
         return numberArmies; 
     }
 
-    public int GetLands()
+    public void SetLand(int numLands)
+    {
+        this.numberLands = numLands;
+    }
+
+    public int GetLand()
     {
         return numberLands;
+    }
+
+    public void Attack(Lord attacker, Lord defender)
+    {
+
+           
     }
 }
