@@ -30,8 +30,8 @@ public class TurnManager : MonoBehaviour
 
     public Lord currentLord;
     
-    Player player;
-    List<AILord> aiLords = new List<AILord>();
+    private Player player;
+    private List<AILord> aiLords = new List<AILord>();
 
     private void Awake()
     {
@@ -142,6 +142,20 @@ public class TurnManager : MonoBehaviour
         {
             currentLord = player;
         }
+    }
+
+    //Getter methods for our player
+    public int GetPlayerWealth()
+    {
+        return player.GetWealth(); 
+    }
+    public int GetPlayerArmies()
+    {
+        return player.GetArmies();
+    }
+    public int GetPlayerLand()
+    {
+        return player.GetLandCount();
     }
 }
 

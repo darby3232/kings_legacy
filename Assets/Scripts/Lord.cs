@@ -60,8 +60,6 @@ public class Lord
     {
         int wealthLeft = wealth - NumberLandlessSoldiers();
 
-        Debug.Log("Landless Soldiers: " + NumberLandlessSoldiers());
-
         if(wealthLeft < 0)
         {
             armies = Mathf.Max(0, armies + wealthLeft);

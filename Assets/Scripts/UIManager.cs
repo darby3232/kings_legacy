@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
+    private TextMeshPro playerResourceText;
+
     public Button expandButton;
     public Button recruitButton;
     public Button attackButton;
@@ -25,6 +28,8 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        tm = TurnManager.instance;
+
         expandButton.onClick.AddListener(ExpandOnClick);
         recruitButton.onClick.AddListener(RecruitOnClick);
         attackButton.onClick.AddListener(AttackOnClick);
@@ -40,7 +45,6 @@ public class UIManager : MonoBehaviour
              RecruitDropdownHandler(recruitDropdown);
          });
 
-        tm = TurnManager.instance;
 
         //Set all screens to non-active
         playerActionScreen.SetActive(false);
@@ -59,7 +63,13 @@ public class UIManager : MonoBehaviour
         {
             playerActionScreen.SetActive(false);
         }
-            
+
+        //Update Player Resources
+        string playerWealthInfo = "Wealth: " + tm.GetPlayerWealth() + "\n";
+        string playerArmyInfo = "Armies: " + tm.GetPlayerArmies() + "\n";
+        string playerLandInfo = "Land Count: " + tm.GetPlayerLand();
+
+        playerResourceText.text = playerWealthInfo + playerArmyInfo + playerLandInfo;
     }
 
     void ExpandOnClick()
@@ -73,8 +83,7 @@ public class UIManager : MonoBehaviour
     void SetupExpandDropdown()
     {
         expandDropdown.ClearOptions();
-        List<string> expandAmounts = new List<string>();
-        expandAmounts.Add("Choose Amount");
+        List<string> expandAmounts = new List<string> { "Choose Amount" };
         int maxExpandAmount = Mathf.Min(tm.currentLord.GetArmies(), tm.currentLord.GetWealth());
         for(int i = 0; i <= maxExpandAmount; i++)
         {
@@ -104,8 +113,7 @@ public class UIManager : MonoBehaviour
     void SetupRecruitDropdown()
     {
         recruitDropdown.ClearOptions();
-        List<string> recruitAmounts = new List<string>();
-        recruitAmounts.Add("Choose Amount");
+        List<string> recruitAmounts = new List<string> { "Choose Amount" };
         Debug.Log("Current Wealth: " + tm.currentLord.GetWealth());
         for (int i = 0; i <= tm.currentLord.GetWealth(); i++)
         {
