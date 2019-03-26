@@ -29,17 +29,17 @@ public class BattleManager : MonoBehaviour
     {
         if(attackerWon)
         {
-            int landTaken = (defender.GetLand() - 1) / 3; //3 is 2 + 1 to round up the answer
+            int landTaken = (defender.GetLandCount() - 1) / 3; //3 is 2 + 1 to round up the answer
 
-            attacker.SetLand(attacker.GetLand() + landTaken);
-            defender.SetLand(defender.GetLand() - landTaken);
+            attacker.SetLand(attacker.GetLandCount() + landTaken);
+            defender.SetLand(defender.GetLandCount() - landTaken);
         }
         else
         {
-            int landTaken = (attacker.GetLand() - 1) / 3; //3 is 2 + 1 to round up the answer
+            int landTaken = (attacker.GetLandCount() - 1) / 3; //3 is 2 + 1 to round up the answer
 
-            attacker.SetLand(attacker.GetLand() - landTaken);
-            defender.SetLand(defender.GetLand() + landTaken);
+            attacker.SetLand(attacker.GetLandCount() - landTaken);
+            defender.SetLand(defender.GetLandCount() + landTaken);
         }
     }
 
