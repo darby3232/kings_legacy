@@ -2,55 +2,61 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleManager : MonoBehaviour
+public class Battle
 {
-    private bool battleInProgress;
-
     private Lord attacker;
     private Lord defender;
 
-    public void Update()
+    public bool BattleStep()
     {
-        //timer logic
-    }
+        
 
-    private void BattleStep()
-    {
+        //check for win
         if (defender.GetArmies() <= 0)
         {
             WinBattle(true);
+            return true;
         }else if(attacker.GetArmies() <= 0)
         {
             WinBattle(false);
+            return true;
         }
+
+        //battle logic
+        int coinFlip = Random.Range(0, 2);
+        if (coinFlip == 0)
+        {
+            attacker.ArmyLosesBattle();
+        }
+        else
+        {
+            defender.ArmyLosesBattle();
+        }
+
+
+        return false;
     }
 
     private void WinBattle(bool attackerWon)
     {
         if(attackerWon)
         {
-            int landTaken = (defender.GetLandCount() - 1) / 3; //3 is 2 + 1 to round up the answer
+            int landTaken = (defender.GetLandCount()) / 2; 
 
             attacker.SetLand(attacker.GetLandCount() + landTaken);
             defender.SetLand(defender.GetLandCount() - landTaken);
         }
         else
         {
-            int landTaken = (attacker.GetLandCount() - 1) / 3; //3 is 2 + 1 to round up the answer
+            int landTaken = (attacker.GetLandCount()) / 2; 
 
             attacker.SetLand(attacker.GetLandCount() - landTaken);
             defender.SetLand(defender.GetLandCount() + landTaken);
         }
     }
 
-    public void BeginBattle(Lord attacker, Lord defender)
-    {
-        if (battleInProgress)
-        {
-            Debug.Log("Battle existed at begin battle");
-        }
-        battleInProgress = true;
-
+    public void CreateBattle(Lord attacker, Lord defender)
+    {       
         this.attacker = attacker;
         this.defender = defender;
 

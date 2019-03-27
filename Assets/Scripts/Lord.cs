@@ -14,9 +14,10 @@ public class Lord
     protected float specialLandChance; 
     
     protected int armies = 0;
-    protected int lands = 0; //Land [] lands;
+    protected int lands = 0;
     protected int wealth = 0;
-    protected Lord nextLord; 
+    protected Lord nextLord;
+
 
     public Lord(bool isKing, Color lordsColor, float specialLandChance, int startingWealth, int startingArmies, int startingLand, string name)
     {
@@ -103,6 +104,11 @@ public class Lord
     public int GetArmies()
     {
         return armies; 
+    }
+
+    public void ArmyLosesBattle()
+    {
+        armies--;
     }
 
     public void SetLand(int numLands)

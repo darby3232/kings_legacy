@@ -33,6 +33,8 @@ public class TurnManager : MonoBehaviour
     private Player player;
     private List<AILord> aiLords = new List<AILord>();
 
+    private Battle currentBattle; 
+
     private void Awake()
     {
                
@@ -66,6 +68,7 @@ public class TurnManager : MonoBehaviour
         }
 
         currentLord = player;
+        currentBattle = new Battle();
         currentGameState = GameState.StartOfTurn;
     }
 
@@ -111,7 +114,10 @@ public class TurnManager : MonoBehaviour
                 //Do nothing, this is handled by the UI
                 break;
             case GameState.BattleOccuring:
-                //Do Nothing
+                if(currentBattle.BattleStep())
+                {
+                    currentGameState = GameState.EndOfTurn;
+                }
                 break;
             case GameState.EndOfTurn:
                 //print current lord
@@ -123,9 +129,7 @@ public class TurnManager : MonoBehaviour
                 break;
             case GameState.GameOver:
                 
-                Debug.Log("GameOver");
-
-               
+                Debug.Log("GameOver");               
                 break;
         }
 
@@ -157,6 +161,22 @@ public class TurnManager : MonoBehaviour
     {
         return player.GetLandCount();
     }
+    public Player GetPlayerInstance()
+    {
+        return player;
+    }
+
+    public List<AILord> GetAILords()
+    {
+        return aiLords;
+    }
+    
+    //Get a Battle Creator
+    public void CreateBattle(Lord attacker, Lord defender)
+    {
+        currentBattle.CreateBattle(attacker, defender);
+    }
+
 }
 
 

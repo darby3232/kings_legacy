@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    private TextMeshPro playerResourceText;
 
     public Button expandButton;
     public Button recruitButton;
@@ -16,12 +14,11 @@ public class UIManager : MonoBehaviour
     public GameObject playerActionScreen;
     public GameObject playerExpandScreen;
     public GameObject playerRecruitScreen;
+    public GameObject playerAttackScreen;
 
     public Dropdown expandDropdown;
     public Dropdown recruitDropdown;
-
-   /* public Dropdown lordToAttackDropdown;
-    public Dropdown armiesToSendDropdown;*/
+    public Dropdown lordToAttackDropdown;
 
     TurnManager tm; 
 
@@ -45,6 +42,10 @@ public class UIManager : MonoBehaviour
              RecruitDropdownHandler(recruitDropdown);
          });
 
+        lordToAttackDropdown.onValueChanged.AddListener(delegate
+        {
+            AttackDropdownHandler(lordToAttackDropdown);
+        });
 
         //Set all screens to non-active
         playerActionScreen.SetActive(false);
@@ -62,14 +63,7 @@ public class UIManager : MonoBehaviour
         else
         {
             playerActionScreen.SetActive(false);
-        }
-
-        //Update Player Resources
-        string playerWealthInfo = "Wealth: " + tm.GetPlayerWealth() + "\n";
-        string playerArmyInfo = "Armies: " + tm.GetPlayerArmies() + "\n";
-        string playerLandInfo = "Land Count: " + tm.GetPlayerLand();
-
-        playerResourceText.text = playerWealthInfo + playerArmyInfo + playerLandInfo;
+        }        
     }
 
     void ExpandOnClick()
@@ -90,7 +84,14 @@ public class UIManager : MonoBehaviour
             expandAmounts.Add(i.ToString());
         }
         expandDropdown.AddOptions(expandAmounts);
-        
+        //We need to remove listeners to change the value
+        expandDropdown.onValueChanged.RemoveAllListeners();
+        expandDropdown.value = 0;
+        expandDropdown.onValueChanged.AddListener(delegate
+        {
+            ExpandDropdownHandler(expandDropdown);
+        });
+        expandDropdown.RefreshShownValue();
         playerExpandScreen.SetActive(true);
     }
 
@@ -98,6 +99,7 @@ public class UIManager : MonoBehaviour
     {
         int amountExpanded = expand.value;
         tm.currentLord.Expand(amountExpanded);
+        DropdownFix(expandDropdown);
         playerExpandScreen.SetActive(false);
         tm.currentGameState = TurnManager.GameState.EndOfTurn;
     }
@@ -114,13 +116,19 @@ public class UIManager : MonoBehaviour
     {
         recruitDropdown.ClearOptions();
         List<string> recruitAmounts = new List<string> { "Choose Amount" };
-        Debug.Log("Current Wealth: " + tm.currentLord.GetWealth());
         for (int i = 0; i <= tm.currentLord.GetWealth(); i++)
         {
             recruitAmounts.Add(i.ToString());
         }
         recruitDropdown.AddOptions(recruitAmounts);
-
+        //We need to remove listeners to change the value
+        recruitDropdown.onValueChanged.RemoveAllListeners();
+        recruitDropdown.value = 0;
+        recruitDropdown.onValueChanged.AddListener(delegate
+        {
+            RecruitDropdownHandler(recruitDropdown);
+        });
+        recruitDropdown.RefreshShownValue();
         playerRecruitScreen.SetActive(true);
     }
 
@@ -128,16 +136,53 @@ public class UIManager : MonoBehaviour
     {
         int amountRecruited = recruit.value;
         tm.currentLord.Recruit(amountRecruited);
+        DropdownFix(recruitDropdown);
         playerRecruitScreen.SetActive(false);
         tm.currentGameState = TurnManager.GameState.EndOfTurn;
     }
 
     void AttackOnClick()
     {
-        Debug.Log("Attacking - Not Yet Implemented");
+        Debug.Log("Attacking");
+        tm.currentGameState = TurnManager.GameState.PlayerSpecifyingAction;
+        SetupAttackDropdown();
+    }
 
-        //Temporary
-        tm.currentGameState = TurnManager.GameState.EndOfTurn;
+    void SetupAttackDropdown()
+    {
+        lordToAttackDropdown.ClearOptions();
+        List<string> lordNames = new List<string> { "Choose Defender" }; 
+        foreach(AILord lord in tm.GetAILords())
+        {
+            if(lord.GetLandCount() > 0)
+                lordNames.Add(lord.lordName);
+        }
+        lordToAttackDropdown.AddOptions(lordNames);
+        //We need to remove listeners to change the value
+        lordToAttackDropdown.onValueChanged.RemoveAllListeners();
+        lordToAttackDropdown.value = 0;
+        lordToAttackDropdown.onValueChanged.AddListener(delegate
+        {
+            AttackDropdownHandler(lordToAttackDropdown);
+        });
+        lordToAttackDropdown.RefreshShownValue();
+        playerAttackScreen.SetActive(true);
+    }
+
+    private void AttackDropdownHandler(Dropdown lordString)
+    {
+        Lord lordToAttack = tm.GetAILords()[lordString.value - 1];
+        if(lordToAttack == null)
+        {
+            Debug.Log("Lord Attacking Null");
+        }else if(tm.GetPlayerInstance() == null)
+        {
+            Debug.Log("Player Attacking Null");
+        }
+        tm.CreateBattle(tm.GetPlayerInstance(), lordToAttack);
+        DropdownFix(lordToAttackDropdown);
+        playerAttackScreen.SetActive(false);
+        tm.currentGameState = TurnManager.GameState.BattleOccuring;
     }
 
     void DoNothingOnClick()
@@ -147,6 +192,8 @@ public class UIManager : MonoBehaviour
         tm.currentGameState = TurnManager.GameState.EndOfTurn;
     }
 
-   
-
+    void DropdownFix(Dropdown dropdown)
+    {
+        Destroy(dropdown.transform.Find("Dropdown List").gameObject);
+    }
 }
