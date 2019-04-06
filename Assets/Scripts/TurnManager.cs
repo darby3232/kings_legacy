@@ -24,13 +24,14 @@ public class TurnManager : MonoBehaviour
     public GameState currentGameState = GameState.StartOfTurn;
     public bool playerActionMenuShown = false;
 
+    public int playerCount; 
 
     public LordInfo playerInfo;
     public LordInfo [] aiLordsInfo;
 
     public Lord currentLord;
     
-    private Player player;
+    private List<Player> players = new List<Player>();
     private List<AILord> aiLords = new List<AILord>();
 
     private Battle currentBattle; 
@@ -52,8 +53,14 @@ public class TurnManager : MonoBehaviour
     private void Start()
     {
         //CREATE and set up THE PLAYERS
-        player = new Player(playerInfo.isKing, playerInfo.lordsColor, playerInfo.specialLandChance, playerInfo.startingWealth, playerInfo.startingArmies, playerInfo.startingLandCount, "Player");
-        player.PrintLord();
+        for(int i = 0; i < playerCount; i++)
+        {
+            players.Add(new Player(playerInfo.isKing, playerInfo.lordsColor, playerInfo.specialLandChance, playerInfo.startingWealth, playerInfo.startingArmies, playerInfo.startingLandCount, "Player" + i + 1));
+            players[i].PrintLord();
+        }
+
+
+       
         for (int i = 0; i < aiLordsInfo.Length; i++)
         {
             aiLords.Add(new AILord(aiLordsInfo[i].isKing, aiLordsInfo[i].lordsColor, aiLordsInfo[i].specialLandChance, aiLordsInfo[i].startingWealth, aiLordsInfo[i].startingArmies, aiLordsInfo[i].startingLandCount, aiLordsInfo[i].name));
@@ -61,13 +68,19 @@ public class TurnManager : MonoBehaviour
         }
 
         //Give each lord their next player
-        player.SetNextLord(aiLords[0]);
+        for(int i = players.Count - 1; i > 0; i--)
+        {
+            players[i].SetNextLord(players[i - 1]);
+        }
+
+        players[0].SetNextLord(aiLords[0]);
         for (int i = 0; i < aiLords.Count - 1; i++)
         {
             aiLords[i].SetNextLord(aiLords[i + 1]);
         }
+        aiLords[aiLords.Count - 1].SetNextLord(players[players.Count - 1]);
 
-        currentLord = player;
+        currentLord = players[0];
         currentBattle = new Battle();
         currentGameState = GameState.StartOfTurn;
     }
@@ -137,18 +150,10 @@ public class TurnManager : MonoBehaviour
 
     private void JumpToNextLord()
     {
-        //Go to start of next player's turn
-        if (currentLord.GetNextLord() != null)
-        {
-            currentLord = currentLord.GetNextLord();
-        }
-        else
-        {
-            currentLord = player;
-        }
+       currentLord = currentLord.GetNextLord();  
     }
 
-    //Getter methods for our player
+    /*//Getter methods for our player
     public int GetPlayerWealth()
     {
         return player.GetWealth(); 
@@ -160,15 +165,16 @@ public class TurnManager : MonoBehaviour
     public int GetPlayerLand()
     {
         return player.GetLandCount();
-    }
-    public Player GetPlayerInstance()
-    {
-        return player;
-    }
-
+    }*/
+   
     public List<AILord> GetAILords()
     {
         return aiLords;
+    }
+
+    public List<Player> GetPlayers()
+    {
+        return players;
     }
     
     //Get a Battle Creator

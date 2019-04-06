@@ -157,6 +157,13 @@ public class UIManager : MonoBehaviour
             if(lord.GetLandCount() > 0)
                 lordNames.Add(lord.lordName);
         }
+        foreach(Player lord in tm.GetPlayers())
+        {
+            if(lord.GetLandCount() > 0 && lord != tm.currentLord)
+            {
+                lordNames.Add(lord.lordName);
+            }        
+        }
         lordToAttackDropdown.AddOptions(lordNames);
         //We need to remove listeners to change the value
         lordToAttackDropdown.onValueChanged.RemoveAllListeners();
@@ -171,15 +178,27 @@ public class UIManager : MonoBehaviour
 
     private void AttackDropdownHandler(Dropdown lordString)
     {
-        Lord lordToAttack = tm.GetAILords()[lordString.value - 1];
+        Lord lordToAttack = null;
+           
+        foreach(Lord lord in tm.GetAILords())
+        {
+            if (lordString.captionText.text == lord.lordName)
+                lordToAttack = lord; 
+        }
+        foreach (Lord lord in tm.GetPlayers())
+        {
+            if (lordString.captionText.text == lord.lordName)
+                lordToAttack = lord;
+        }
+
         if(lordToAttack == null)
         {
             Debug.Log("Lord Attacking Null");
-        }else if(tm.GetPlayerInstance() == null)
+        }else if(tm.currentLord == null)
         {
             Debug.Log("Player Attacking Null");
         }
-        tm.CreateBattle(tm.GetPlayerInstance(), lordToAttack);
+        tm.CreateBattle(tm.currentLord, lordToAttack);
         DropdownFix(lordToAttackDropdown);
         playerAttackScreen.SetActive(false);
         tm.currentGameState = TurnManager.GameState.BattleOccuring;

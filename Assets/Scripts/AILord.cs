@@ -48,21 +48,24 @@ public class AILord : Lord
                 {
                     lastAction = "No Lords to Attack, Passed";
                 }
-                TurnManager.instance.currentGameState = TurnManager.GameState.EndOfTurn;
+                TurnManager.instance.currentGameState = TurnManager.GameState.BattleOccuring;
                 break;
         }
     }
 
     private Lord GetRandomLordToAttack()
     {
-        List<Lord> lordsToAttack = new List<Lord>(); 
+        List<Lord> lordsToAttack = new List<Lord>();
 
-        if(TurnManager.instance.GetPlayerLand() > 0)
+        foreach (Lord lord in TurnManager.instance.GetPlayers())
         {
-            lordsToAttack.Add(TurnManager.instance.GetPlayerInstance());
+            if (lord.GetArmies() > 0)
+            {
+                lordsToAttack.Add(lord);
+            }
         }
 
-        foreach(Lord lord in TurnManager.instance.GetAILords())
+        foreach (Lord lord in TurnManager.instance.GetAILords())
         {
             if(lord.GetArmies() > 0 && lord != this)
             {

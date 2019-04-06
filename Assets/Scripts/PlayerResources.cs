@@ -19,11 +19,18 @@ public class PlayerResources : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Update Player Resources
-        string playerWealthInfo = "Wealth: " + tm.GetPlayerWealth() + "\n";
-        string playerArmyInfo = "Armies: " + tm.GetPlayerArmies() + "\n";
-        string playerLandInfo = "Land Count: " + tm.GetPlayerLand();
+        string allPlayers = "";
+        foreach (Player lord in tm.GetPlayers())
+        {
+            //Update Player Resources
+            string lordNameInfo = lord.lordName + "\n";
+            string lordWealthInfo = "Wealth: " + lord.GetWealth() + "\n";
+            string lordArmyInfo = "Armies: " + lord.GetArmies() + "\n";
+            string lordLandInfo = "Land: " + lord.GetLandCount() + "\n";
 
-        playerResourceText.text = "Player: \n" + playerWealthInfo + playerArmyInfo + playerLandInfo;
+            allPlayers += lordNameInfo + lordWealthInfo + lordArmyInfo + lordLandInfo + "\n";
+        }
+        playerResourceText.text = allPlayers;
+
     }
 }
