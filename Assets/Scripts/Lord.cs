@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Lord
 {
-
+    public enum ResourceTypes { Land, Wealth, Armies };
 
     public Color LordsColor;
     public Vector3 armyPlacement;
@@ -101,9 +101,19 @@ public class Lord
         return wealth; 
     }
     
+    public void SetWealth(int newWealth)
+    {
+        this.wealth = newWealth;
+    }
+
     public int GetArmies()
     {
         return armies; 
+    }
+
+    public void SetArmies(int newArmies)
+    {
+        this.armies = newArmies;
     }
 
     public void ArmyLosesBattle()

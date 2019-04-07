@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class TurnManager : MonoBehaviour
 {
-    public enum GameState { StartOfTurn, PlayerChoosingAction, PlayerSpecifyingAction, BattleOccuring, PlayerIncome, EndOfTurn, GameOver }
+    public enum GameState { StartOfTurn, PlayerChoosingAction, PlayerSpecifyingAction, PlayerDecidingTrades, PlayerSpecifyingTrade, BattleOccuring, PlayerIncome, EndOfTurn, GameOver }
 
    [System.Serializable]
     public struct LordInfo
@@ -34,7 +34,8 @@ public class TurnManager : MonoBehaviour
     private List<Player> players = new List<Player>();
     private List<AILord> aiLords = new List<AILord>();
 
-    private Battle currentBattle; 
+    private Battle currentBattle;
+    public Trade currentTrade;
 
     private void Awake()
     {
@@ -59,8 +60,7 @@ public class TurnManager : MonoBehaviour
             players[i].PrintLord();
         }
 
-
-       
+              
         for (int i = 0; i < aiLordsInfo.Length; i++)
         {
             aiLords.Add(new AILord(aiLordsInfo[i].isKing, aiLordsInfo[i].lordsColor, aiLordsInfo[i].specialLandChance, aiLordsInfo[i].startingWealth, aiLordsInfo[i].startingArmies, aiLordsInfo[i].startingLandCount, aiLordsInfo[i].name));
@@ -82,6 +82,7 @@ public class TurnManager : MonoBehaviour
 
         currentLord = players[0];
         currentBattle = new Battle();
+        currentTrade = new Trade();
         currentGameState = GameState.StartOfTurn;
     }
 
@@ -126,6 +127,12 @@ public class TurnManager : MonoBehaviour
             case GameState.PlayerSpecifyingAction:
                 //Do nothing, this is handled by the UI
                 break;
+            case GameState.PlayerDecidingTrades:
+                //Do nothing, this is handled by the UI
+                break;
+            case GameState.PlayerSpecifyingTrade:
+
+                break;
             case GameState.BattleOccuring:
                 if(currentBattle.BattleStep())
                 {
@@ -153,20 +160,6 @@ public class TurnManager : MonoBehaviour
        currentLord = currentLord.GetNextLord();  
     }
 
-    /*//Getter methods for our player
-    public int GetPlayerWealth()
-    {
-        return player.GetWealth(); 
-    }
-    public int GetPlayerArmies()
-    {
-        return player.GetArmies();
-    }
-    public int GetPlayerLand()
-    {
-        return player.GetLandCount();
-    }*/
-   
     public List<AILord> GetAILords()
     {
         return aiLords;

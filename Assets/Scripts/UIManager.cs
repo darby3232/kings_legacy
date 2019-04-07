@@ -11,6 +11,26 @@ public class UIManager : MonoBehaviour
     public Button attackButton;
     public Button doNothingButton;
 
+    public GameObject chooseToTradeScreen;
+    public GameObject whoToTradeWithScreen;
+    public GameObject chooseWhatToOfferScreen;
+    public GameObject chooseHowMuchToOfferScreen;
+    public GameObject chooseWhatToAskForScreen;
+    public GameObject chooseWhatAmountToAskForScreen;
+    public GameObject askIfRecipientAgreesScreen;
+
+    public Button yesTradeButton;
+    public Button noTradeButton;
+
+    public Button acceptTradeButton;
+    public Button refuseTradeButton;
+
+    public Dropdown tradeWithWhoDropdown;
+    public Dropdown tradeForWhatDropdown;
+    public Dropdown tradeForWhatAmountDropdown;
+    public Dropdown offerWhatResourceDropdown;
+    public Dropdown offerWhatAmountDropdown;
+    
     public GameObject playerActionScreen;
     public GameObject playerExpandScreen;
     public GameObject playerRecruitScreen;
@@ -32,39 +52,302 @@ public class UIManager : MonoBehaviour
         attackButton.onClick.AddListener(AttackOnClick);
         doNothingButton.onClick.AddListener(DoNothingOnClick);
 
-        expandDropdown.onValueChanged.AddListener(delegate
-        {
-            ExpandDropdownHandler(expandDropdown);
-        });
+        yesTradeButton.onClick.AddListener(BeginTradeOnClick);
+        noTradeButton.onClick.AddListener(DoNothingOnClick);
 
-        recruitDropdown.onValueChanged.AddListener(delegate
-         {
-             RecruitDropdownHandler(recruitDropdown);
-         });
-
-        lordToAttackDropdown.onValueChanged.AddListener(delegate
-        {
-            AttackDropdownHandler(lordToAttackDropdown);
-        });
+        acceptTradeButton.onClick.AddListener(AcceptTradeOnClick);
+        refuseTradeButton.onClick.AddListener(RefuseTradeOnClick); 
 
         //Set all screens to non-active
         playerActionScreen.SetActive(false);
         playerExpandScreen.SetActive(false);
         playerRecruitScreen.SetActive(false);
+        chooseToTradeScreen.SetActive(false);
+        whoToTradeWithScreen.SetActive(false);
+        chooseWhatToOfferScreen.SetActive(false);
+        chooseHowMuchToOfferScreen.SetActive(false);
+        chooseWhatToAskForScreen.SetActive(false);
+        chooseWhatAmountToAskForScreen.SetActive(false);
+        askIfRecipientAgreesScreen.SetActive(false);
 
-    }
+}
 
     private void Update()
     {
         if(tm.currentGameState == TurnManager.GameState.PlayerChoosingAction && !(tm.currentLord is AILord))
         {
             playerActionScreen.SetActive(true);
+            chooseToTradeScreen.SetActive(false);
+        }
+        else if(tm.currentGameState == TurnManager.GameState.PlayerDecidingTrades && !(tm.currentLord is AILord))
+        {
+            chooseToTradeScreen.SetActive(true);
+            playerActionScreen.SetActive(false);
         }
         else
         {
             playerActionScreen.SetActive(false);
-        }        
+            chooseToTradeScreen.SetActive(false);
+        }
     }
+
+
+    void RefuseTradeOnClick()
+    {
+        tm.currentGameState = TurnManager.GameState.EndOfTurn;
+        askIfRecipientAgreesScreen.SetActive(false);
+    }
+
+    void AcceptTradeOnClick()
+    {
+        //do trade
+
+        Player offeringPlayer = tm.currentTrade.offeringPlayer;
+        Player recipientPlayer = tm.currentTrade.recipientPlayer;
+
+        switch (tm.currentTrade.resourceOffered)
+        {
+            case Lord.ResourceTypes.Armies:
+                offeringPlayer.SetArmies(offeringPlayer.GetArmies() - tm.currentTrade.amountResourceOffered);
+                recipientPlayer.SetArmies(recipientPlayer.GetArmies() + tm.currentTrade.amountResourceOffered);
+                break;
+            case Lord.ResourceTypes.Land:
+                offeringPlayer.SetLand(offeringPlayer.GetLandCount() - tm.currentTrade.amountResourceOffered);
+                recipientPlayer.SetLand(recipientPlayer.GetLandCount() + tm.currentTrade.amountResourceOffered);
+                break;
+            case Lord.ResourceTypes.Wealth:
+                offeringPlayer.SetWealth(offeringPlayer.GetWealth() - tm.currentTrade.amountResourceOffered);
+                recipientPlayer.SetWealth(recipientPlayer.GetWealth() + tm.currentTrade.amountResourceOffered);
+                break;
+        }
+
+        switch (tm.currentTrade.resourceToReceive)
+        {
+            case Lord.ResourceTypes.Armies:
+                recipientPlayer.SetArmies(recipientPlayer.GetArmies() - tm.currentTrade.amountResourceReceived);
+                offeringPlayer.SetArmies(offeringPlayer.GetArmies() + tm.currentTrade.amountResourceReceived);
+                break;
+            case Lord.ResourceTypes.Land:
+                recipientPlayer.SetLand(recipientPlayer.GetLandCount() - tm.currentTrade.amountResourceReceived);
+                offeringPlayer.SetLand(offeringPlayer.GetLandCount() + tm.currentTrade.amountResourceReceived);
+                break;
+            case Lord.ResourceTypes.Wealth:
+                recipientPlayer.SetWealth(recipientPlayer.GetWealth() - tm.currentTrade.amountResourceReceived);
+                offeringPlayer.SetWealth(offeringPlayer.GetWealth() + tm.currentTrade.amountResourceReceived);
+                break;
+        }
+
+        tm.currentGameState = TurnManager.GameState.EndOfTurn;
+        askIfRecipientAgreesScreen.SetActive(false);
+    }
+
+    void DoNotTradeOnClick()
+    {
+        Debug.Log("Don't Trade");
+        chooseToTradeScreen.SetActive(false);
+        tm.currentGameState = TurnManager.GameState.EndOfTurn;
+    }
+
+    void BeginTradeOnClick()
+    {
+        Debug.Log("Beginning Trade");
+
+        tm.currentTrade.offeringPlayer = (Player)tm.currentLord;
+        chooseToTradeScreen.SetActive(false);
+        tm.currentGameState = TurnManager.GameState.PlayerSpecifyingTrade;
+        SetupTradeWhoDropdown();
+    }
+
+    void SetupTradeWhoDropdown()
+    {
+        tradeWithWhoDropdown.ClearOptions();
+        List<string> lordNames = new List<string> { "Choose Trade Partner" };
+        foreach (Player lord in tm.GetPlayers())
+        {
+            if (lord != tm.currentLord)
+            {
+                lordNames.Add(lord.lordName);
+            }
+        }
+        tradeWithWhoDropdown.AddOptions(lordNames);
+        //We need to remove listeners to change the value
+        tradeWithWhoDropdown.onValueChanged.RemoveAllListeners();
+        tradeWithWhoDropdown.value = 0;
+        tradeWithWhoDropdown.onValueChanged.AddListener(delegate
+        {
+            TradeWithWhoDropdownHandler(tradeWithWhoDropdown);
+        });
+        tradeWithWhoDropdown.RefreshShownValue();
+        whoToTradeWithScreen.SetActive(true);
+    }
+
+    private void TradeWithWhoDropdownHandler(Dropdown tradeWithWho)
+    {
+        Player lordToTradeWith = null;
+
+        foreach (Player lord in tm.GetPlayers())
+        {
+            if (tradeWithWho.captionText.text == lord.lordName)
+                lordToTradeWith = lord;
+        }
+
+        if (lordToTradeWith == null)
+        {
+            Debug.Log("Lord Attacking Null");
+        }
+        else if (tm.currentLord == null)
+        {
+            Debug.Log("Player Attacking Null");
+        }
+        tm.currentTrade.recipientPlayer = lordToTradeWith;
+        DropdownFix(tradeWithWho);
+        whoToTradeWithScreen.SetActive(false);
+        SetupTradeForWhatDropdown();
+    }
+
+    
+    void SetupTradeForWhatDropdown()
+    {
+        tradeForWhatDropdown.ClearOptions();
+        List<string> resourceNames = new List<string> { "Choose What you Want", "Land", "Wealth", "Armies" };
+        tradeForWhatDropdown.AddOptions(resourceNames);
+
+        tradeForWhatDropdown.onValueChanged.RemoveAllListeners();
+        tradeForWhatDropdown.value = 0;
+        tradeForWhatDropdown.onValueChanged.AddListener(delegate
+        {
+            TradeForWhatDropdownHandler(tradeForWhatDropdown);
+        });
+        tradeForWhatDropdown.RefreshShownValue();
+        chooseWhatToAskForScreen.SetActive(true);
+    }
+
+    private void TradeForWhatDropdownHandler(Dropdown tradeForWhat)
+    {
+        Lord.ResourceTypes resource = (Lord.ResourceTypes) tradeForWhat.value - 1;
+        tm.currentTrade.resourceToReceive = resource;
+        DropdownFix(tradeForWhat);
+        chooseWhatToAskForScreen.SetActive(false);
+        SetupTradeForWhatAmountDropdown();
+    }
+
+    void SetupTradeForWhatAmountDropdown()
+    {
+        tradeForWhatAmountDropdown.ClearOptions();
+        List<string> resourceAmounts = new List<string> { "How Much?" };
+
+        int maxAmountPossibleToTrade = 0; 
+        if(tm.currentTrade.resourceOffered == Lord.ResourceTypes.Armies)
+        {
+            maxAmountPossibleToTrade = tm.currentTrade.recipientPlayer.GetArmies();
+        }else if(tm.currentTrade.resourceOffered == Lord.ResourceTypes.Land)
+        {
+            maxAmountPossibleToTrade = tm.currentTrade.recipientPlayer.GetLandCount();
+        }else if(tm.currentTrade.resourceOffered == Lord.ResourceTypes.Wealth)
+        {
+            maxAmountPossibleToTrade = tm.currentTrade.recipientPlayer.GetWealth();
+        }
+        
+        for(int i = 0; i <= maxAmountPossibleToTrade; i++)
+        {
+            resourceAmounts.Add(i.ToString());
+        }
+
+        tradeForWhatAmountDropdown.AddOptions(resourceAmounts);
+
+        tradeForWhatAmountDropdown.onValueChanged.RemoveAllListeners();
+        tradeForWhatAmountDropdown.value = 0;
+        tradeForWhatAmountDropdown.onValueChanged.AddListener(delegate
+        {
+            AskForWhatAmountHandler(tradeForWhatAmountDropdown);
+        });
+        tradeForWhatAmountDropdown.RefreshShownValue();
+        chooseWhatAmountToAskForScreen.SetActive(true);
+    }
+
+    void AskForWhatAmountHandler(Dropdown whatAmount)
+    {
+        int amountAskedFor = whatAmount.value - 1;
+        tm.currentTrade.amountResourceReceived = amountAskedFor;
+
+        DropdownFix(whatAmount);
+        chooseWhatAmountToAskForScreen.SetActive(false);
+        SetupWhatToOffer();
+    }
+
+    void SetupWhatToOffer()
+    {
+        offerWhatResourceDropdown.ClearOptions();
+        List<string> resourceNames = new List<string> { "Choose What you Want", "Land", "Wealth", "Armies" };
+        offerWhatResourceDropdown.AddOptions(resourceNames);
+
+        offerWhatResourceDropdown.onValueChanged.RemoveAllListeners();
+        offerWhatResourceDropdown.value = 0;
+        offerWhatResourceDropdown.onValueChanged.AddListener(delegate
+        {
+            WhatToOfferDropdownHandler(offerWhatResourceDropdown);
+        });
+        offerWhatResourceDropdown.RefreshShownValue();
+        chooseWhatToOfferScreen.SetActive(true);
+    }
+
+    void WhatToOfferDropdownHandler(Dropdown resourceOffered)
+    {
+        Lord.ResourceTypes resource = (Lord.ResourceTypes)resourceOffered.value - 1;
+        tm.currentTrade.resourceOffered = resource;
+
+        DropdownFix(resourceOffered);
+        chooseWhatToOfferScreen.SetActive(false);
+        SetupWhatAmountToOffer();
+    }
+
+    void SetupWhatAmountToOffer()
+    {
+        offerWhatAmountDropdown.ClearOptions();
+        List<string> resourceAmounts = new List<string> { "How Much?" };
+
+        int maxAmountPossibleToTrade = 0;
+        if (tm.currentTrade.resourceOffered == Lord.ResourceTypes.Armies)
+        {
+            maxAmountPossibleToTrade = tm.currentLord.GetArmies();
+        }
+        else if (tm.currentTrade.resourceOffered == Lord.ResourceTypes.Land)
+        {
+            maxAmountPossibleToTrade = tm.currentLord.GetLandCount();
+        }
+        else if (tm.currentTrade.resourceOffered == Lord.ResourceTypes.Wealth)
+        {
+            maxAmountPossibleToTrade = tm.currentLord.GetWealth();
+        }
+
+        for (int i = 0; i <= maxAmountPossibleToTrade; i++)
+        {
+            resourceAmounts.Add(i.ToString());
+        }
+
+        offerWhatAmountDropdown.AddOptions(resourceAmounts);
+
+        offerWhatAmountDropdown.onValueChanged.RemoveAllListeners();
+        offerWhatAmountDropdown.value = 0;
+        offerWhatAmountDropdown.onValueChanged.AddListener(delegate
+        {
+            OfferWhatAmountDropdownHandler(offerWhatAmountDropdown);
+        });
+        offerWhatAmountDropdown.RefreshShownValue();
+        chooseHowMuchToOfferScreen.SetActive(true);
+    }
+
+    private void OfferWhatAmountDropdownHandler(Dropdown whatAmount)
+    {
+        int amount = whatAmount.value - 1;
+        tm.currentTrade.amountResourceOffered = amount;
+
+        DropdownFix(whatAmount);
+        chooseHowMuchToOfferScreen.SetActive(false);
+        askIfRecipientAgreesScreen.SetActive(true);
+    }
+
+    
 
     void ExpandOnClick()
     {
@@ -97,11 +380,11 @@ public class UIManager : MonoBehaviour
 
     private void ExpandDropdownHandler(Dropdown expand)
     {
-        int amountExpanded = expand.value;
+        int amountExpanded = expand.value - 1;
         tm.currentLord.Expand(amountExpanded);
         DropdownFix(expandDropdown);
         playerExpandScreen.SetActive(false);
-        tm.currentGameState = TurnManager.GameState.EndOfTurn;
+        tm.currentGameState = TurnManager.GameState.PlayerDecidingTrades;
     }
 
     void RecruitOnClick()
@@ -134,11 +417,11 @@ public class UIManager : MonoBehaviour
 
     private void RecruitDropdownHandler(Dropdown recruit)
     {
-        int amountRecruited = recruit.value;
+        int amountRecruited = recruit.value - 1;
         tm.currentLord.Recruit(amountRecruited);
         DropdownFix(recruitDropdown);
         playerRecruitScreen.SetActive(false);
-        tm.currentGameState = TurnManager.GameState.EndOfTurn;
+        tm.currentGameState = TurnManager.GameState.PlayerDecidingTrades;
     }
 
     void AttackOnClick()
@@ -208,7 +491,7 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("Doing Nothing");        
 
-        tm.currentGameState = TurnManager.GameState.EndOfTurn;
+        tm.currentGameState = TurnManager.GameState.PlayerDecidingTrades;
     }
 
     void DropdownFix(Dropdown dropdown)
