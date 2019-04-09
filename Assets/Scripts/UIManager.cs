@@ -53,7 +53,7 @@ public class UIManager : MonoBehaviour
         doNothingButton.onClick.AddListener(DoNothingOnClick);
 
         yesTradeButton.onClick.AddListener(BeginTradeOnClick);
-        noTradeButton.onClick.AddListener(DoNothingOnClick);
+        noTradeButton.onClick.AddListener(DoNotTradeOnClick);
 
         acceptTradeButton.onClick.AddListener(AcceptTradeOnClick);
         refuseTradeButton.onClick.AddListener(RefuseTradeOnClick); 
