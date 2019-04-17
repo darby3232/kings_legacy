@@ -24,31 +24,34 @@ public class AILord : Lord
         {
             case AILordAction.Nothing:
                 lastAction = "Nothing";
-                TurnManager.instance.currentGameState = TurnManager.GameState.EndOfTurn;
+                PlayerManager.instance.currentGameState = PlayerManager.GameState.EndOfTurn;
                 break;
             case AILordAction.Recruit:
                 lastAction = "Recruited " + GetWealth() + " Armies";
                 Recruit(GetWealth());
-                TurnManager.instance.currentGameState = TurnManager.GameState.EndOfTurn;
+                PlayerManager.instance.currentGameState = PlayerManager.GameState.EndOfTurn;
                 break;
             case AILordAction.Expand:
                 int maxExpansion = Mathf.Min(GetWealth(), GetArmies());
                 lastAction = "Expanded " + maxExpansion + " Lands";
                 Expand(maxExpansion);
-                TurnManager.instance.currentGameState = TurnManager.GameState.EndOfTurn;
+                PlayerManager.instance.currentGameState = PlayerManager.GameState.EndOfTurn;
                 break;
             case AILordAction.Attack:
                 Lord lordToAttack = GetRandomLordToAttack(); 
                 if(lordToAttack != null)
                 {
                     lastAction = "Attacked " + lordToAttack.lordName;
-                    TurnManager.instance.CreateBattle(this, lordToAttack);
+                    Battle battle = new Battle(this, lordToAttack);
+                    while (!battle.BattleStep())
+                    { }
+                    
                 }
                 else
                 {
                     lastAction = "No Lords to Attack, Passed";
                 }
-                TurnManager.instance.currentGameState = TurnManager.GameState.BattleOccuring;
+                PlayerManager.instance.currentGameState = PlayerManager.GameState.EndOfTurn;
                 break;
         }
     }
@@ -57,7 +60,7 @@ public class AILord : Lord
     {
         List<Lord> lordsToAttack = new List<Lord>();
 
-        foreach (Lord lord in TurnManager.instance.GetPlayers())
+        foreach (Lord lord in PlayerManager.instance.GetPlayers())
         {
             if (lord.GetArmies() > 0)
             {
@@ -65,7 +68,7 @@ public class AILord : Lord
             }
         }
 
-        foreach (Lord lord in TurnManager.instance.GetAILords())
+        foreach (Lord lord in PlayerManager.instance.GetAILords())
         {
             if(lord.GetArmies() > 0 && lord != this)
             {

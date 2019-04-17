@@ -6,18 +6,18 @@ using TMPro;
 
 public class CurrentPlayer : MonoBehaviour
 {
-    private TurnManager tm;
+    private PlayerManager pm;
     private TextMeshProUGUI playerResourceText;
 
     void Start()
     {
-        tm = TurnManager.instance;
+        pm = PlayerManager.instance;
         playerResourceText = GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
     {
-        playerResourceText.text = tm.currentLord.lordName;
+        playerResourceText.text = pm.currentLord.lordName;
     }
 
 }

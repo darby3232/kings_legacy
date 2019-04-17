@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-public class TurnManager : MonoBehaviour
+public class PlayerManager : MonoBehaviour
 {
-    public enum GameState { StartOfTurn, PlayerChoosingAction, PlayerSpecifyingAction, PlayerDecidingTrades, PlayerSpecifyingTrade, BattleOccuring, PlayerIncome, EndOfTurn, GameOver }
+    public enum GameState { StartOfTurn, PlayerChoosingAction, PlayerSpecifyingAction, PlayerDecidingTrades, PlayerSpecifyingTrade, PlayerIncome, EndOfTurn, GameOver }
 
    [System.Serializable]
     public struct LordInfo
@@ -20,7 +20,7 @@ public class TurnManager : MonoBehaviour
         public string name;
     }
 
-    public static TurnManager instance = null;
+    public static PlayerManager instance = null;
     public GameState currentGameState = GameState.StartOfTurn;
     public bool playerActionMenuShown = false;
 
@@ -34,7 +34,6 @@ public class TurnManager : MonoBehaviour
     private List<Player> players = new List<Player>();
     private List<AILord> aiLords = new List<AILord>();
 
-    private Battle currentBattle;
     public Trade currentTrade;
 
     private void Awake()
@@ -46,7 +45,7 @@ public class TurnManager : MonoBehaviour
             instance = this;
         //If instance already exists and it's not this:
         else if (instance != this)
-            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a TurnManager.
+            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a PlayerManager.
             Destroy(gameObject);
                      
     }
@@ -68,20 +67,20 @@ public class TurnManager : MonoBehaviour
         }
 
         //Give each lord their next player
-        for(int i = players.Count - 1; i > 0; i--)
+        for(int i = 0; i < playerCount - 1; i++)
         {
-            players[i].SetNextLord(players[i - 1]);
+            players[i].SetNextLord(players[i + 1]);
         }
+        players[playerCount - 1].SetNextLord(players[0]);
 
-        players[0].SetNextLord(aiLords[0]);
+        /*players[0].SetNextLord(aiLords[0]);
         for (int i = 0; i < aiLords.Count - 1; i++)
         {
             aiLords[i].SetNextLord(aiLords[i + 1]);
         }
-        aiLords[aiLords.Count - 1].SetNextLord(players[players.Count - 1]);
+        aiLords[aiLords.Count - 1].SetNextLord(players[players.Count - 1]);*/
 
         currentLord = players[0];
-        currentBattle = new Battle();
         currentTrade = new Trade();
         currentGameState = GameState.StartOfTurn;
     }
@@ -93,7 +92,7 @@ public class TurnManager : MonoBehaviour
         {
             case GameState.StartOfTurn:
                 //Check if win
-                if(currentLord.GetLandCount() <= 0)
+                if(currentLord.GetLandCount() <= 0 && currentLord.GetArmies() <= 0 && currentLord.GetWealth() <= 0)
                 {
                     //go to next lord, this lord is out
                     JumpToNextLord();
@@ -123,21 +122,12 @@ public class TurnManager : MonoBehaviour
                     ((AILord)currentLord).TakeRandomAction();
                 }
                 //Otherwise, do nothing as it is handled by the UI
-                break;
-            case GameState.PlayerSpecifyingAction:
-                //Do nothing, this is handled by the UI
-                break;
+                break;        
             case GameState.PlayerDecidingTrades:
                 //Do nothing, this is handled by the UI
                 break;
             case GameState.PlayerSpecifyingTrade:
 
-                break;
-            case GameState.BattleOccuring:
-                if(currentBattle.BattleStep())
-                {
-                    currentGameState = GameState.EndOfTurn;
-                }
                 break;
             case GameState.EndOfTurn:
                 //print current lord
@@ -155,6 +145,11 @@ public class TurnManager : MonoBehaviour
 
     }
 
+    public void EndTurn()
+    {
+        currentGameState = GameState.EndOfTurn;
+    }
+
     private void JumpToNextLord()
     {
        currentLord = currentLord.GetNextLord();  
@@ -170,11 +165,6 @@ public class TurnManager : MonoBehaviour
         return players;
     }
     
-    //Get a Battle Creator
-    public void CreateBattle(Lord attacker, Lord defender)
-    {
-        currentBattle.CreateBattle(attacker, defender);
-    }
 
 }
 

@@ -7,18 +7,42 @@ public class Battle
     private Lord attacker;
     private Lord defender;
 
+    private Lord winner; 
+
+    public Battle(Lord attacker, Lord defender)
+    {
+        this.attacker = attacker;
+        this.defender = defender;
+
+        if (attacker.GetArmies() <= 0)
+        {
+            Debug.Log("Attacker with less than 0 Armies Attacking");
+        }
+
+        //should make sure attacker has more than 0 armies when attacking
+        if (defender.GetArmies() <= 0)
+        {
+            WinBattle(true);
+        }
+    }
+
+    public Lord GetWinner()
+    {
+        return winner;
+    }
+
     public bool BattleStep()
     {
-        
-
         //check for win
         if (defender.GetArmies() <= 0)
         {
             WinBattle(true);
+            winner = attacker;
             return true;
         }else if(attacker.GetArmies() <= 0)
         {
             WinBattle(false);
+            winner = defender;
             return true;
         }
 
@@ -32,7 +56,6 @@ public class Battle
         {
             defender.ArmyLosesBattle();
         }
-
 
         return false;
     }
@@ -55,20 +78,4 @@ public class Battle
         }
     }
 
-    public void CreateBattle(Lord attacker, Lord defender)
-    {       
-        this.attacker = attacker;
-        this.defender = defender;
-
-        if (attacker.GetArmies() <= 0)
-        {
-            Debug.Log("Attacker with less than 0 Armies Attacking");
-        }
-
-        //should make sure attacker has more than 0 armies when attacking
-        if (defender.GetArmies() <= 0)
-        {
-            WinBattle(true);
-        }
-    }
 }

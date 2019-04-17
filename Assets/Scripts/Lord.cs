@@ -96,6 +96,16 @@ public class Lord
         lands += resourcesSpent;
     }
 
+    public int GetMaxRecruit()
+    {
+        return wealth; 
+    }
+
+    public int GetMaxExpand()
+    {
+        return Mathf.Min(wealth, armies);
+    }
+
     public int GetWealth()
     {
         return wealth; 

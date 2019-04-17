@@ -7,12 +7,12 @@ using TMPro;
 public class PlayerResources : MonoBehaviour
 {
 
-    private TurnManager tm;
+    private PlayerManager pm;
     private TextMeshProUGUI playerResourceText;
 
     void Start()
     {
-        tm = TurnManager.instance;
+        pm = PlayerManager.instance;
         playerResourceText = GetComponent<TextMeshProUGUI>();
     }
 
@@ -20,7 +20,7 @@ public class PlayerResources : MonoBehaviour
     void Update()
     {
         string allPlayers = "";
-        foreach (Player lord in tm.GetPlayers())
+        foreach (Player lord in pm.GetPlayers())
         {
             //Update Player Resources
             string lordNameInfo = lord.lordName + "\n";
