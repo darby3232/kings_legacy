@@ -71,7 +71,7 @@ public class Counter : MonoBehaviour
         }
 
         //Go to next step
-        pm.currentGameState = PlayerManager.GameState.EndOfTurn;
+        //pm.currentGameState = PlayerManager.GameState.EndOfTurn;
     }
 
     private void IncreaseCount()

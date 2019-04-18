@@ -106,7 +106,7 @@ public class WarScript : MonoBehaviour
     private void VictoryContinueButton()
     {
         victoryScreen.SetActive(false);
-        pm.currentGameState = PlayerManager.GameState.EndOfTurn;
+        //pm.currentGameState = PlayerManager.GameState.EndOfTurn;
     }
 
     private void DefenderDropdownHandler(TMP_Dropdown dropdown)

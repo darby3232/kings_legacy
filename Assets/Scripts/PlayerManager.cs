@@ -73,13 +73,6 @@ public class PlayerManager : MonoBehaviour
         }
         players[playerCount - 1].SetNextLord(players[0]);
 
-        /*players[0].SetNextLord(aiLords[0]);
-        for (int i = 0; i < aiLords.Count - 1; i++)
-        {
-            aiLords[i].SetNextLord(aiLords[i + 1]);
-        }
-        aiLords[aiLords.Count - 1].SetNextLord(players[players.Count - 1]);*/
-
         currentLord = players[0];
         currentTrade = new Trade();
         currentGameState = GameState.StartOfTurn;
