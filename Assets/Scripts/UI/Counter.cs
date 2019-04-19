@@ -50,6 +50,8 @@ public class Counter : MonoBehaviour
                 maxCount = currentLord.GetArmies();
                 break;            
         }
+        playerResourceText.text = 0.ToString();
+
         Debug.Log("Max Count1: " + maxCount);
     }
 
@@ -63,7 +65,7 @@ public class Counter : MonoBehaviour
                 currentLord.Recruit(count);
                 break;
             case UICounterType.Expand:
-                currentLord.Recruit(count);
+                currentLord.Expand(count);
                 break;
             case UICounterType.Attack:
                 maxCount = currentLord.GetArmies();
