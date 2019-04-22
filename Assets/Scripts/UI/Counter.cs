@@ -28,8 +28,13 @@ public class Counter : MonoBehaviour
     {
         count = 0;
         maxCount = 0;
-        
+
         //set up buttons
+        upButton.onClick.RemoveAllListeners();
+        downButton.onClick.RemoveAllListeners();
+        acceptButton.onClick.RemoveAllListeners();
+
+
         upButton.onClick.AddListener(IncreaseCount);
         downButton.onClick.AddListener(DecreaseCount);
         acceptButton.onClick.AddListener(AcceptDeal);

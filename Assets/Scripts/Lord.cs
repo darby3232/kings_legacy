@@ -18,6 +18,9 @@ public class Lord
     protected int wealth = 0;
     protected Lord nextLord;
 
+    protected int kingPoints = 0;
+    protected int roundsAsKing = 0;
+
 
     public Lord(bool isKing, Color lordsColor, float specialLandChance, int startingWealth, int startingArmies, int startingLand, string name)
     {
@@ -28,6 +31,28 @@ public class Lord
         wealth = startingWealth;
         lands = startingLand;
         lordName = name;
+    }
+
+    public bool IsKing()
+    {
+        return isKing;
+    }
+
+    public int GetKingPoints()
+    {
+        return kingPoints;
+    }   
+
+    public void IncreaseKingPoints()
+    {
+        roundsAsKing++;
+        isKing = true;  
+        kingPoints += roundsAsKing;
+    }
+
+    public void RemoveKingStatus()
+    {
+        roundsAsKing = 0;
     }
 
     public void SetNextLord(Lord nextLord)

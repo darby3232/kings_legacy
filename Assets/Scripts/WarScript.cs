@@ -32,6 +32,9 @@ public class WarScript : MonoBehaviour
         if (pm == null)
             pm = PlayerManager.instance;
 
+        //set winner message to nothing
+        winnerMessage.text = "";
+
         //set up accept buttons
         acceptButton.onClick.AddListener(BattleAccepted);
         victoryContinueButton.onClick.AddListener(VictoryContinueButton);
@@ -73,6 +76,8 @@ public class WarScript : MonoBehaviour
     private void BattleAccepted()
     {
         battle = new Battle(pm.currentLord, currentLordSelected);
+
+
 
         BattleStep();
     }

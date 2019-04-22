@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class PlayerManager : MonoBehaviour
 {
-    public enum GameState { StartOfTurn, PlayerChoosingAction, PlayerSpecifyingAction, PlayerDecidingTrades, PlayerSpecifyingTrade, PlayerIncome, EndOfTurn, GameOver }
+    public enum GameState { BeforeSetup, StartOfTurn, PlayerChoosingAction, PlayerSpecifyingAction, PlayerDecidingTrades, PlayerSpecifyingTrade, PlayerIncome, EndOfTurn, RoundOver, GameOver }
 
    [System.Serializable]
     public struct LordInfo
@@ -21,20 +21,20 @@ public class PlayerManager : MonoBehaviour
     }
 
     public static PlayerManager instance = null;
-    public GameState currentGameState = GameState.StartOfTurn;
-    public bool playerActionMenuShown = false;
-
-    public int playerCount; 
+    public GameState currentGameState = GameState.BeforeSetup;
 
     public LordInfo playerInfo;
     public LordInfo [] aiLordsInfo;
-
     public Lord currentLord;
-    
+    public int kingPointsToWin;
+
+    private int playerCount;
+
     private List<Player> players = new List<Player>();
     private List<AILord> aiLords = new List<AILord>();
 
-    public Trade currentTrade;
+    private string[] playerNames = { "Thornberg", "Birla", "Alfi", "Ynghildr", "Signi", "Hildingr" };
+
 
     private void Awake()
     {
@@ -50,20 +50,15 @@ public class PlayerManager : MonoBehaviour
                      
     }
 
-    private void Start()
+    public void SetupPlayers(int playerCount)
     {
+        this.playerCount = playerCount;
+
         //CREATE and set up THE PLAYERS
         for(int i = 0; i < playerCount; i++)
         {
-            players.Add(new Player(playerInfo.isKing, playerInfo.lordsColor, playerInfo.specialLandChance, playerInfo.startingWealth, playerInfo.startingArmies, playerInfo.startingLandCount, "Player" + i + 1));
+            players.Add(new Player(playerInfo.isKing, playerInfo.lordsColor, playerInfo.specialLandChance, playerInfo.startingWealth, playerInfo.startingArmies, playerInfo.startingLandCount, playerNames[i]));
             players[i].PrintLord();
-        }
-
-              
-        for (int i = 0; i < aiLordsInfo.Length; i++)
-        {
-            aiLords.Add(new AILord(aiLordsInfo[i].isKing, aiLordsInfo[i].lordsColor, aiLordsInfo[i].specialLandChance, aiLordsInfo[i].startingWealth, aiLordsInfo[i].startingArmies, aiLordsInfo[i].startingLandCount, aiLordsInfo[i].name));
-            aiLords[i].PrintLord();
         }
 
         //Give each lord their next player
@@ -74,8 +69,34 @@ public class PlayerManager : MonoBehaviour
         players[playerCount - 1].SetNextLord(players[0]);
 
         currentLord = players[0];
-        currentTrade = new Trade();
         currentGameState = GameState.StartOfTurn;
+    }
+
+    public void ResetPlayers()
+    {
+        //CREATE and set up THE PLAYERS
+        for (int i = 0; i < playerCount; i++)
+        {
+            if (players[i].IsKing())
+            {
+                Debug.Log("Giving a player king status");
+                //Give king starting stats
+                players[i].SetLand(playerInfo.startingLandCount + 1);
+                players[i].SetWealth(playerInfo.startingWealth + 1);
+                players[i].SetArmies(playerInfo.startingArmies + 1);
+            }
+            else
+            {
+                //Give normal stats
+                players[i].SetLand(playerInfo.startingLandCount);
+                players[i].SetWealth(playerInfo.startingWealth);
+                players[i].SetArmies(playerInfo.startingArmies);
+            }
+        }
+
+        currentLord = currentLord.GetNextLord();
+        currentGameState = GameState.StartOfTurn;
+
     }
 
     private void Update()
@@ -93,8 +114,8 @@ public class PlayerManager : MonoBehaviour
                 else if(currentLord.GetLandCount() >= 5)
                 {
                     //WIN
-                    Debug.Log(currentLord.lordName + " won!");
-                    currentGameState = GameState.GameOver;
+                    Debug.Log(currentLord.lordName + " won the round!");
+                    currentGameState = GameState.RoundOver;
                 }
                 else
                 {
@@ -130,10 +151,37 @@ public class PlayerManager : MonoBehaviour
 
                 currentGameState = GameState.StartOfTurn;
                 break;
-            case GameState.GameOver:
+            case GameState.RoundOver:
+                //check winner -> currentPlayer
+                currentLord.IncreaseKingPoints();
+
+                //Make sure old king does not persist
+                foreach(Player player in players)
+                {
+                    if(player != currentLord && player.IsKing())
+                    {
+                        player.RemoveKingStatus();
+                    }
+                }
                 
-                Debug.Log("GameOver");               
+                //check if current player has won the game
+                if(currentLord.GetKingPoints() > kingPointsToWin)
+                {
+                    //Win the game
+                    currentGameState = currentGameState = GameState.GameOver;
+                }
+                else
+                {
+                    ResetPlayers();
+                    currentGameState = GameState.StartOfTurn;
+                }
+
                 break;
+            case GameState.GameOver:
+
+                Debug.Log(currentLord.lordName + " has won the game!");
+                break;
+            
         }
 
     }
