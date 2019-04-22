@@ -35,6 +35,9 @@ public class WarScript : MonoBehaviour
         //set winner message to nothing
         winnerMessage.text = "";
 
+        acceptButton.onClick.RemoveAllListeners();
+        victoryContinueButton.onClick.RemoveAllListeners();
+
         //set up accept buttons
         acceptButton.onClick.AddListener(BattleAccepted);
         victoryContinueButton.onClick.AddListener(VictoryContinueButton);

@@ -70,6 +70,7 @@ public class TradeScript : MonoBehaviour
         });
 
         UpdateReceiveAmountDropdown();
+        sendTradeButton.onClick.RemoveAllListeners();
         sendTradeButton.onClick.AddListener(SendTradeOffer);
 
     }
@@ -80,6 +81,9 @@ public class TradeScript : MonoBehaviour
                             offerAmountDropdown.value.ToString() + " " + offerResourceDropdown.captionText.text + " for \n" + 
                             receiveAmountDropdown.value.ToString() + " " + receiveResourceDropdown.captionText.text;
         tradeOfferDescription.text = tradeText;
+
+        acceptTradeOffer.onClick.RemoveAllListeners();
+        rejectTradeOffer.onClick.RemoveAllListeners();
 
         //set up buttons
         acceptTradeOffer.onClick.AddListener(AcceptTradeOffer);
