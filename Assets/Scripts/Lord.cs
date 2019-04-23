@@ -9,6 +9,7 @@ public class Lord
     public Color LordsColor;
     public Vector3 armyPlacement;
     public string lordName;
+    public uint lordId;
 
     protected bool isKing;
     protected float specialLandChance; 
@@ -22,7 +23,7 @@ public class Lord
     protected int roundsAsKing = 0;
 
 
-    public Lord(bool isKing, Color lordsColor, float specialLandChance, int startingWealth, int startingArmies, int startingLand, string name)
+    public Lord(bool isKing, Color lordsColor, float specialLandChance, int startingWealth, int startingArmies, int startingLand, string name, uint lordId)
     {
         this.isKing = isKing;
         LordsColor = lordsColor;
@@ -31,6 +32,7 @@ public class Lord
         wealth = startingWealth;
         lands = startingLand;
         lordName = name;
+        this.lordId = lordId;
     }
 
     public bool IsKing()

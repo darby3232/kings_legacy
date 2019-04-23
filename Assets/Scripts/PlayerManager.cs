@@ -22,6 +22,7 @@ public class PlayerManager : MonoBehaviour
 
     public static PlayerManager instance = null;
     public GameState currentGameState = GameState.BeforeSetup;
+    public PlayerIcon iconHandler;
 
     public LordInfo playerInfo;
     public LordInfo [] aiLordsInfo;
@@ -57,7 +58,7 @@ public class PlayerManager : MonoBehaviour
         //CREATE and set up THE PLAYERS
         for(int i = 0; i < playerCount; i++)
         {
-            players.Add(new Player(playerInfo.isKing, playerInfo.lordsColor, playerInfo.specialLandChance, playerInfo.startingWealth, playerInfo.startingArmies, playerInfo.startingLandCount, playerNames[i]));
+            players.Add(new Player(playerInfo.isKing, playerInfo.lordsColor, playerInfo.specialLandChance, playerInfo.startingWealth, playerInfo.startingArmies, playerInfo.startingLandCount, playerNames[i], (uint)i));
             players[i].PrintLord();
         }
 
@@ -70,6 +71,11 @@ public class PlayerManager : MonoBehaviour
 
         currentLord = players[0];
         currentGameState = GameState.StartOfTurn;
+    }
+
+    public int GetPlayerCount()
+    {
+        return playerCount;
     }
 
     public void ResetPlayers()
@@ -105,6 +111,7 @@ public class PlayerManager : MonoBehaviour
         switch (currentGameState)
         {
             case GameState.StartOfTurn:
+                iconHandler.UpdatePlayerIcons();
                 //Check if win
                 if(currentLord.GetLandCount() <= 0 && currentLord.GetArmies() <= 0 && currentLord.GetWealth() <= 0)
                 {

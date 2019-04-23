@@ -8,8 +8,8 @@ public class AILord : Lord
 
     private string lastAction; 
 
-    public AILord(bool isKing, Color lordsColor, float specialLandChance, int startingWealth, int startingArmies, int startingLand, string name)
-        : base(isKing, lordsColor, specialLandChance, startingWealth, startingArmies, startingLand, name)
+    public AILord(bool isKing, Color lordsColor, float specialLandChance, int startingWealth, int startingArmies, int startingLand, string name, uint id)
+        : base(isKing, lordsColor, specialLandChance, startingWealth, startingArmies, startingLand, name, id)
     {
         //extra actions
         lastAction = "First Move";
