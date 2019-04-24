@@ -21,6 +21,10 @@ public class WarScript : MonoBehaviour
     public TextMeshProUGUI attackerArmies;
     public TextMeshProUGUI defenderArmies;
 
+    public TextMeshProUGUI attackerName;
+    public TextMeshProUGUI defenderName;
+
+
     public AudioClip battleSound;
     public AudioSource soundsSource;
 
@@ -34,6 +38,9 @@ public class WarScript : MonoBehaviour
     {
         if (pm == null)
             pm = PlayerManager.instance;
+
+        //set attacker name
+        attackerName.text = pm.currentLord.lordName;
 
         //set winner message to nothing
         winnerMessage.text = "";
@@ -154,6 +161,7 @@ public class WarScript : MonoBehaviour
 
     private void ResetDefenderMessages()
     {
+        defenderName.text = currentLordSelected.lordName;
         defenderArmies.text = "Armies:\n" + currentLordSelected.GetArmies();
         defenderMessage.text = "Would Lose:\n" + currentLordSelected.GetLandCount() / 2 + " Land";
     }
