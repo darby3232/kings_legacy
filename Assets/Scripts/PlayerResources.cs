@@ -22,8 +22,14 @@ public class PlayerResources : MonoBehaviour
         string allPlayers = "";
         foreach (Player lord in pm.GetPlayers())
         {
+            string kingString = "";
+            if (lord.IsKing())
+            {
+                kingString = "(K)";
+            }
+
             //Update Player Resources
-            string lordNameInfo = lord.lordName + "\n";
+            string lordNameInfo = lord.lordName + kingString + "\n";
             string lordWealthInfo = "Wealth: " + lord.GetWealth() + "\n";
             string lordArmyInfo = "Armies: " + lord.GetArmies() + "\n";
             string lordLandInfo = "Land: " + lord.GetLandCount() + "\n";

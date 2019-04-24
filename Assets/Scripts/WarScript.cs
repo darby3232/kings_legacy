@@ -47,7 +47,7 @@ public class WarScript : MonoBehaviour
 
         //set up the attacker's info
         attackerArmies.text = "Armies: " + pm.currentLord.GetArmies();
-        attackerMessage.text = "Risk Losing: " + pm.currentLord.GetLandCount() / 2 + " Land";
+        attackerMessage.text = "Risks Losing:\n" + pm.currentLord.GetLandCount() / 2 + " Land";
 
         //set up the dropdown
         defenderDropdown.onValueChanged.RemoveAllListeners();
@@ -111,7 +111,7 @@ public class WarScript : MonoBehaviour
     private void ShowVictoryScreen()
     {
         //Set Winner Text
-        winnerMessage.text = battle.GetWinner().lordName + "Wins!";
+        winnerMessage.text = battle.GetWinner().lordName + "'s warriors have emerged victorious!";
         victoryScreen.SetActive(true);
     }
 
@@ -148,13 +148,13 @@ public class WarScript : MonoBehaviour
     private void ResetAttackerMessages()
     {
         //set up the attacker's info
-        attackerArmies.text = "Armies: " + pm.currentLord.GetArmies();
-        attackerMessage.text = "Risk Losing: " + pm.currentLord.GetLandCount() / 2 + " Land";
+        attackerArmies.text = "Armies:\n" + pm.currentLord.GetArmies();
+        attackerMessage.text = "Risks Losing:\n" + pm.currentLord.GetLandCount() / 2 + " Land";
     }
 
     private void ResetDefenderMessages()
     {
-        defenderArmies.text = "Armies: " + currentLordSelected.GetArmies();
-        defenderMessage.text = "Risk Losing: " + currentLordSelected.GetLandCount() / 2 + " Land";
+        defenderArmies.text = "Armies:\n" + currentLordSelected.GetArmies();
+        defenderMessage.text = "Would Lose:\n" + currentLordSelected.GetLandCount() / 2 + " Land";
     }
 }

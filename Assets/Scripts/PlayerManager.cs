@@ -31,6 +31,9 @@ public class PlayerManager : MonoBehaviour
     public TextMeshProUGUI gameVictoryMessage;
     public GameObject mainOptionScreen;
 
+    public AudioClip coinSound;
+    public AudioSource soundsSource;
+
     public LordInfo playerInfo;
     public LordInfo [] aiLordsInfo;
     public Lord currentLord;
@@ -107,7 +110,7 @@ public class PlayerManager : MonoBehaviour
             }
         }
 
-        currentLord = currentLord.GetNextLord();
+        //currentLord = currentLord.GetNextLord();
         currentGameState = GameState.StartOfTurn;
 
     }
@@ -138,6 +141,7 @@ public class PlayerManager : MonoBehaviour
                 
                 break;
             case GameState.PlayerIncome:
+                soundsSource.PlayOneShot(coinSound);
                 currentLord.ReceiveIncome();
                 currentLord.SpendToMaintainArmies();
                 currentGameState = GameState.PlayerChoosingAction;
@@ -187,17 +191,17 @@ public class PlayerManager : MonoBehaviour
                     currentGameState = GameState.GameOver;
 
                     //Set text
-                    gameVictoryMessage.text = currentLord + " has become legend!";
+                    gameVictoryMessage.text = currentLord.lordName + " has become legend!";
                 }
                 else
                 {
                     //Round Won
                     mainOptionScreen.SetActive(false);
                     roundVictoryScreen.SetActive(true);
-                    currentGameState = GameState.StartOfTurn;
+                    currentGameState = GameState.EndOfTurn;
 
                     //set text
-                    roundVictoryMessage.text = currentLord.lordName + " has gained fame!";
+                    roundVictoryMessage.text = currentLord.lordName + " has become king!";
                 }
 
                 break;

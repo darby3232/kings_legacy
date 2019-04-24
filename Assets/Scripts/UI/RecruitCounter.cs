@@ -46,6 +46,7 @@ public class RecruitCounter : MonoBehaviour
 
         armiesRecruited.text = 0.ToString();
         wealthAfterExpand.text = currentLord.GetWealth().ToString();
+        homelessSoldiers.text = pm.currentLord.NumberLandlessSoldiers(count + pm.currentLord.GetArmies()).ToString();
     }
 
     //STILL NEED TO SET NEXT GAME STATE IN HERE

@@ -47,6 +47,7 @@ public class Lord
 
     public void IncreaseKingPoints()
     {
+        Debug.Log("King Points: " + kingPoints);
         roundsAsKing++;
         isKing = true;  
         kingPoints += roundsAsKing;
@@ -55,6 +56,7 @@ public class Lord
     public void RemoveKingStatus()
     {
         roundsAsKing = 0;
+        isKing = false;
     }
 
     public void SetNextLord(Lord nextLord)
