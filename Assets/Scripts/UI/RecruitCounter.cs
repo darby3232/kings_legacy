@@ -17,6 +17,8 @@ public class RecruitCounter : MonoBehaviour
 
     public TextMeshProUGUI armiesRecruited;
     public TextMeshProUGUI wealthAfterExpand;
+    public TextMeshProUGUI homelessSoldiers;
+
 
     private PlayerManager pm;
 
@@ -66,6 +68,7 @@ public class RecruitCounter : MonoBehaviour
 
         armiesRecruited.text = count.ToString();
         wealthAfterExpand.text = (pm.currentLord.GetWealth()  - count).ToString();
+        homelessSoldiers.text = pm.currentLord.NumberLandlessSoldiers(count + pm.currentLord.GetArmies()).ToString();
     }
 
     private void DecreaseCount()
@@ -76,6 +79,7 @@ public class RecruitCounter : MonoBehaviour
             count--;
         armiesRecruited.text = count.ToString();
         wealthAfterExpand.text = (pm.currentLord.GetWealth() - count).ToString();
+        homelessSoldiers.text = pm.currentLord.NumberLandlessSoldiers(count + pm.currentLord.GetArmies()).ToString();
     }
 
 

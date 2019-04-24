@@ -27,8 +27,9 @@ public class PlayerResources : MonoBehaviour
             string lordWealthInfo = "Wealth: " + lord.GetWealth() + "\n";
             string lordArmyInfo = "Armies: " + lord.GetArmies() + "\n";
             string lordLandInfo = "Land: " + lord.GetLandCount() + "\n";
+            string legacyInfo = "Legacy: " + lord.GetKingPoints() + "\n";
 
-            allPlayers += lordNameInfo + lordWealthInfo + lordArmyInfo + lordLandInfo + "\n";
+            allPlayers += lordNameInfo + lordWealthInfo + lordArmyInfo + lordLandInfo + legacyInfo + "\n";
         }
         playerResourceText.text = allPlayers;
 

@@ -21,6 +21,9 @@ public class WarScript : MonoBehaviour
     public TextMeshProUGUI attackerArmies;
     public TextMeshProUGUI defenderArmies;
 
+    public AudioClip battleSound;
+    public AudioSource soundsSource;
+
     public TMP_Dropdown defenderDropdown;
 
     private PlayerManager pm;
@@ -97,6 +100,7 @@ public class WarScript : MonoBehaviour
         }
         else
         {
+            soundsSource.PlayOneShot(battleSound);
             Debug.Log("One Step...");
             ResetAttackerMessages();
             ResetDefenderMessages();

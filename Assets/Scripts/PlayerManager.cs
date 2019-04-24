@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
@@ -23,6 +24,12 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager instance = null;
     public GameState currentGameState = GameState.BeforeSetup;
     public PlayerIcon iconHandler;
+
+    public GameObject roundVictoryScreen;
+    public GameObject gameVictoryScreen;
+    public TextMeshProUGUI roundVictoryMessage;
+    public TextMeshProUGUI gameVictoryMessage;
+    public GameObject mainOptionScreen;
 
     public LordInfo playerInfo;
     public LordInfo [] aiLordsInfo;
@@ -175,12 +182,22 @@ public class PlayerManager : MonoBehaviour
                 if(currentLord.GetKingPoints() > kingPointsToWin)
                 {
                     //Win the game
-                    currentGameState = currentGameState = GameState.GameOver;
+                    mainOptionScreen.SetActive(false);
+                    gameVictoryScreen.SetActive(true);
+                    currentGameState = GameState.GameOver;
+
+                    //Set text
+                    gameVictoryMessage.text = currentLord + " has become legend!";
                 }
                 else
                 {
-                    ResetPlayers();
+                    //Round Won
+                    mainOptionScreen.SetActive(false);
+                    roundVictoryScreen.SetActive(true);
                     currentGameState = GameState.StartOfTurn;
+
+                    //set text
+                    roundVictoryMessage.text = currentLord.lordName + " has gained fame!";
                 }
 
                 break;
@@ -196,6 +213,11 @@ public class PlayerManager : MonoBehaviour
     public void EndTurn()
     {
         currentGameState = GameState.EndOfTurn;
+    }
+
+    public void StartTurn()
+    {
+        currentGameState = GameState.StartOfTurn;
     }
 
     private void JumpToNextLord()

@@ -84,6 +84,12 @@ public class Lord
         return Mathf.Max(0, landLessSoldiers);
     }
 
+    public int NumberLandlessSoldiers(int totalArmies)
+    {
+        int landLessSoldiers = totalArmies - (lands * 2);
+        return Mathf.Max(0, landLessSoldiers);
+    }
+
     public void SpendToMaintainArmies()
     {
         int wealthLeft = wealth - NumberLandlessSoldiers();
