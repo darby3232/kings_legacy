@@ -11,19 +11,19 @@ public class SettingsSounds : MonoBehaviour
     public bool soundOn = true;
 
     public void SetVolume(float volume) {
-        audioMixer.SetFloat("Volume", volume);
+        audioMixer.SetFloat("Volume2", volume);
     }
 
     public void ToggleAudio(float returnVolume)
     {
         if (soundOn)
         {
-            audioMixer.SetFloat("Volume", -80);
+            audioMixer.SetFloat("Volume2", -80);
             soundOn = false;
         }
         else
         {
-            audioMixer.SetFloat("Volume", GameObject.Find("Volume Slider").GetComponent<Slider>().value);
+            audioMixer.SetFloat("Volume2", GameObject.Find("Volume Slider").GetComponent<Slider>().value);
             soundOn = true;
         }
     }

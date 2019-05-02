@@ -7,12 +7,12 @@ using TMPro;
 public class PlayerResources : MonoBehaviour
 {
 
-    private TurnManager tm;
+    private PlayerManager pm;
     private TextMeshProUGUI playerResourceText;
 
     void Start()
     {
-        tm = TurnManager.instance;
+        pm = PlayerManager.instance;
         playerResourceText = GetComponent<TextMeshProUGUI>();
     }
 
@@ -20,15 +20,22 @@ public class PlayerResources : MonoBehaviour
     void Update()
     {
         string allPlayers = "";
-        foreach (Player lord in tm.GetPlayers())
+        foreach (Player lord in pm.GetPlayers())
         {
+            string kingString = "";
+            if (lord.IsKing())
+            {
+                kingString = "(K)";
+            }
+
             //Update Player Resources
-            string lordNameInfo = lord.lordName + "\n";
+            string lordNameInfo = lord.lordName + kingString + "\n";
             string lordWealthInfo = "Wealth: " + lord.GetWealth() + "\n";
             string lordArmyInfo = "Armies: " + lord.GetArmies() + "\n";
             string lordLandInfo = "Land: " + lord.GetLandCount() + "\n";
+            string legacyInfo = "Legacy: " + lord.GetKingPoints() + "\n";
 
-            allPlayers += lordNameInfo + lordWealthInfo + lordArmyInfo + lordLandInfo + "\n";
+            allPlayers += lordNameInfo + lordWealthInfo + lordArmyInfo + lordLandInfo + legacyInfo + "\n";
         }
         playerResourceText.text = allPlayers;
 

@@ -9,6 +9,7 @@ public class Lord
     public Color LordsColor;
     public Vector3 armyPlacement;
     public string lordName;
+    public uint lordId;
 
     protected bool isKing;
     protected float specialLandChance; 
@@ -18,8 +19,11 @@ public class Lord
     protected int wealth = 0;
     protected Lord nextLord;
 
+    protected int kingPoints = 0;
+    protected int roundsAsKing = 0;
 
-    public Lord(bool isKing, Color lordsColor, float specialLandChance, int startingWealth, int startingArmies, int startingLand, string name)
+
+    public Lord(bool isKing, Color lordsColor, float specialLandChance, int startingWealth, int startingArmies, int startingLand, string name, uint lordId)
     {
         this.isKing = isKing;
         LordsColor = lordsColor;
@@ -28,6 +32,31 @@ public class Lord
         wealth = startingWealth;
         lands = startingLand;
         lordName = name;
+        this.lordId = lordId;
+    }
+
+    public bool IsKing()
+    {
+        return isKing;
+    }
+
+    public int GetKingPoints()
+    {
+        return kingPoints;
+    }   
+
+    public void IncreaseKingPoints()
+    {
+        Debug.Log("King Points: " + kingPoints);
+        roundsAsKing++;
+        isKing = true;  
+        kingPoints += roundsAsKing;
+    }
+
+    public void RemoveKingStatus()
+    {
+        roundsAsKing = 0;
+        isKing = false;
     }
 
     public void SetNextLord(Lord nextLord)
@@ -54,6 +83,12 @@ public class Lord
     public int NumberLandlessSoldiers()
     {
         int landLessSoldiers = armies - (lands * 2); 
+        return Mathf.Max(0, landLessSoldiers);
+    }
+
+    public int NumberLandlessSoldiers(int totalArmies)
+    {
+        int landLessSoldiers = totalArmies - (lands * 2);
         return Mathf.Max(0, landLessSoldiers);
     }
 
@@ -94,6 +129,16 @@ public class Lord
         armies -= resourcesSpent;
 
         lands += resourcesSpent;
+    }
+
+    public int GetMaxRecruit()
+    {
+        return wealth; 
+    }
+
+    public int GetMaxExpand()
+    {
+        return Mathf.Min(wealth, armies);
     }
 
     public int GetWealth()
